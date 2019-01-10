@@ -20,6 +20,13 @@ int main(int argc, char* argv[]){
 	struct sockaddr_in serv_addr;
 	pthread_t snd_thread, rcv_thread;
 	void * thread_return;
+	if(argc != 4){
+		printf("Usage : %s <IP> <port> <name>\n", argv[0]);
+		exit(1);
+	}
+
+	sprintf(name, "[%s]", argv[3]);
+	sock = socket(PF_INET, SOCK_STREAM, 0);
 	
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
