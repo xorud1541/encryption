@@ -12,10 +12,10 @@ void * send_msg(void* arg);
 void * recv_msg(void* arg);
 void error_handling(char *arg);
 
-//char nick[NAME_SIZE] = "[DEFAULT]";
 char msg[BUF_SIZE];
 string nick;
-//string msg;
+
+
 int interface(int);
 int main(int argc, char* argv[]){
 	int sock;
@@ -37,19 +37,46 @@ int main(int argc, char* argv[]){
 	if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
 		error_handling("connect() error");
 
+
+	bool key = false;
 	while(1){
 		int s = interface(sock);
-		if(s==1){
-			cout << "success" << endl;
+		if(s == 1){
+			key = true;
 			break;
 		}
-		else if(s==-1)
+		else if(s == -1)
 			continue;
 		else
 		{
-			return 0;
+			break;
 		}
 	}
+
+	if(key){
+		int num;
+		printf(" -------------\n");
+		printf(" #1 chat room \n");
+		printf(" #2 chat room \n");
+		printf(" -------------\n");
+		printf(" input >> "); cin >> num;
+		
+		if(num == 1){
+			write(sock, "1", sizeof("1"));
+		}
+		else{
+			write(sock, "2", sizeof("2"));
+
+		}
+
+
+	}
+	else{
+		close(sock);
+		return 0;
+	}
+
+	
 
 	pthread_create(&snd_thread, NULL, send_msg, (void*)&sock);
 	pthread_create(&rcv_thread, NULL, recv_msg, (void*)&sock);
@@ -64,7 +91,7 @@ int interface(int sock){
 	printf("1. [join]\n");
 	printf("2. [login]\n");
 	printf("3. [quit]\n");
-	cin >> num;
+	printf("input >> ");  cin >> num;
 
 
 	if(num == 1){
@@ -97,8 +124,10 @@ int interface(int sock){
 			nick = id;
 			return 1;
 		}
-		else
+		else{
+			puts(" [join fail] ");
 			return -1;
+		}
 					
 	}
 	else if(num == 2){
